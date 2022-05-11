@@ -21,28 +21,28 @@ dest:
 
 .text
 main:
-    addi t0, x0, 0
-    addi s0, x0, 0
-    la s1, source
-    la s2, dest
+    addi t0, x0, 0  # t0 = 0
+    addi s0, x0, 0  # s0 = 0
+    la s1, source   # s1 = source address
+    la s2, dest     # s2 = dest address
 loop:
-    slli s3, t0, 2
-    add t1, s1, s3
-    lw t2, 0(t1)
+    slli s3, t0, 2  # s3 = t0 << 2  -> +4 字节
+    add t1, s1, s3  # t1 = s1 + s3  : t1是source array element的指针
+    lw t2, 0(t1)    # t2 = source[k]
     beq t2, x0, exit
-    add a0, x0, t2
+    add a0, x0, t2  # a0 = t2
     addi sp, sp, -8
-    sw t0, 0(sp)
-    sw t2, 4(sp)
+    sw t0, 0(sp)    # save t0
+    sw t2, 4(sp)    # save t2, why we need to store t2?
     jal square
-    lw t0, 0(sp)
-    lw t2, 4(sp)
-    addi sp, sp, 8
-    add t2, x0, a0
-    add t3, s2, s3
-    sw t2, 0(t3)
-    add s0, s0, t2
-    addi t0, t0, 1
+    lw t0, 0(sp)    # resotre t0
+    lw t2, 4(sp)    # restore t2
+    addi sp, sp, 8  # restore sp
+    add t2, x0, a0  # t2 = a0 -> a0 <=> desk[k]
+    add t3, s2, s3  # t3 指向当前引用的desk[k]地址
+    sw t2, 0(t3)    # desk[k] = t2
+    add s0, s0, t2  # s0 <==> sum
+    addi t0, t0, 1  # k++
     jal x0, loop
 square:
     add t0, a0, x0
